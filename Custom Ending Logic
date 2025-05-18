@@ -1,0 +1,25 @@
+import string
+import math
+
+class HashService:
+    def __init__(self):
+        self.alphabet = string.ascii_letters + string.digits
+        self.base = len(self.alphabet)
+
+    def encode(self, num):
+        """Convert numeric ID to short string"""
+        if num == 0:
+            return self.alphabet[0]
+        
+        arr = []
+        while num:
+            num, rem = divmod(num, self.base)
+            arr.append(self.alphabet[rem])
+        return ''.join(reversed(arr))
+
+    def decode(self, short_str):
+        """Convert short string back to numeric ID"""
+        num = 0
+        for char in short_str:
+            num = num * self.base + self.alphabet.index(char)
+        return num
