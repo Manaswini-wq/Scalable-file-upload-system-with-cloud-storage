@@ -1,0 +1,23 @@
+import redis
+from app.utils.config import REDIS_CONFIG
+
+class CacheService:
+    def __init__(self):
+        self.redis = redis.StrictRedis(
+            host=REDIS_CONFIG['host'],
+            port=REDIS_CONFIG['port'],
+            db=REDIS_CONFIG['db'],
+            decode_responses=True
+        )
+
+    def cache_url(self, short_code, original_url, ttl=86400):
+        """Cache URL with expiration"""
+        self.redis.setex(f'url:{short_code}', ttl, original_url)
+
+    def get_cached_url(self, short_code):
+        """Retrieve cached URL"""
+        return self.redis.get(f'url:{short_code}')
+
+    def increment_click(self, short_code):
+        """Increment click counter in Redis"""
+        self.redis.zincrby('url_clicks', 1, short_code)
